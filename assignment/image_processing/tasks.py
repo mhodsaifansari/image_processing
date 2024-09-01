@@ -96,8 +96,7 @@ def work_image(image_id):
 def webhook(request_id):
     setting = Setting.objects.first()
     if setting is None:
-        setting = Setting(url="http://127.0.0.1:8000/webhookasdsad")
-        setting.save()
+        return None
     url = setting.url
     image_request = ProcessingRequest.objects.filter(id=request_id).first()
     if image_request is None:
@@ -109,9 +108,7 @@ def webhook(request_id):
         response_body = res.json()
     except Exception as e:
         print(e)
-        response_body=None
-    print(status_code)
-    print(response_body)
+        response_body=str(e)
     image_request.webhook_request = json.dumps(webhook_request)
     image_request.webhook_status = status_code
     image_request.webhook_response = json.dumps(response_body)

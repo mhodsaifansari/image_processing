@@ -42,13 +42,11 @@ class Service:
         try:
             serializer.is_valid(raise_exception=True)
         except Exception as e:
-            print(e)
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         file = serializer.validated_data['file']
         try:
             reader = pd.read_csv(file)
         except Exception as e:
-            print(e)
             return Response({"status":"error","message":"invalid csv"},status=status.HTTP_400_BAD_REQUEST)
         if reader.isnull().values.any():
             return Response({"status":"error","message":"csv contains null value"},status=status.HTTP_400_BAD_REQUEST)
@@ -56,14 +54,12 @@ class Service:
         try:
             schema.validate(reader)
         except errors.SchemaError as e:
-            print(e)
             return Response({"status":"error","message":str(e)},status=status.HTTP_400_BAD_REQUEST)  
         images = list(reader['Input Image Urls'])
         image_count = sum([len(image_list.split(',')) for image_list in images])
         request = ProcessingRequest(status=ProcessingRequest.ProcessingStatus.PENDING,image_count=image_count)
         request.save()
         for _, row in reader.iterrows():
-            print(row)
             sku = row['Product Name']
             images = row['Input Image Urls']
             sku = SKUItem(sku=sku,request=request)
@@ -89,8 +85,6 @@ class Service:
             output_images = ','.join([request_body.build_absolute_uri(input.image.url) for input in output_images])
             response_dict[sku.sku]={'input_images':input_images,'output_images':output_images}
             data.append([f"{i}.",sku.sku,input_images,output_images])
-            print(sku.sku)
-            print([f"{i}.",sku.sku,input_images,output_images])
         df = pd.DataFrame(data=data,columns=['S.No.','Product Name','Input Image Urls','Output Image Urls'])
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=result.csv'
@@ -108,7 +102,6 @@ class Service:
                 return Response(ProcessingRequestCompleted(image_request,context={'csv_file':csv_url}).data,status=status.HTTP_200_OK)
             return Response(ProcessingRequestCompletedWithWebhook(image_request,context={'csv_file':csv_url}).data,status=status.HTTP_200_OK)
         else:
-            print(image_request.status)
             if image_request.webhook_status is None: 
                 return Response(ProcessingRequestFailed(image_request).data,status=status.HTTP_200_OK)
             else:

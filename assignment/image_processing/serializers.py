@@ -56,11 +56,12 @@ class ProcessingRequestCompletedWithWebhook(ModelSerializer):
             raise ValidationError('csv_file not provided')
         
     def get_webhook(self,obj):
+        setting= Setting.objects.first()
         return {
             'status':obj.webhook_status,
             'request':json.loads(obj.webhook_request),
             'response':json.loads(obj.webhook_response),
-            # 'webhook_url':obj.webhook_setting.url
+            'webhook_url':setting.url if setting else "" 
         }
     class Meta:
         model = ProcessingRequest

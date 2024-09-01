@@ -1,9 +1,6 @@
 
-import datetime
 from image_processing.tasks import webhook, work_image
-from image_processing.service import Service
 from image_processing.models import Images, ProcessingRequest
-# from image_processing.service import Service
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
