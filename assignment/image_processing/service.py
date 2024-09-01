@@ -85,6 +85,7 @@ class Service:
             output_images = ','.join([request_body.build_absolute_uri(input.image.url) for input in output_images])
             response_dict[sku.sku]={'input_images':input_images,'output_images':output_images}
             data.append([f"{i}.",sku.sku,input_images,output_images])
+            i+=1
         df = pd.DataFrame(data=data,columns=['S.No.','Product Name','Input Image Urls','Output Image Urls'])
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=result.csv'
