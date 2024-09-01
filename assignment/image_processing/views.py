@@ -60,5 +60,5 @@ class SetWebhook(APIView):
 
 # check status
 class Webhook(APIView):
-    def get(self,request):
+    def post(self,request):
         return Response({"status":"cool"})

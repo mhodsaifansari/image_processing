@@ -102,7 +102,7 @@ def webhook(request_id):
     if image_request is None:
         return None
     webhook_request = {'id':str(request_id),'status':image_request.status}
-    res=requests.get(url+'asds')
+    res=requests.post(url)
     status_code = res.status_code
     try:
         response_body = res.json()
